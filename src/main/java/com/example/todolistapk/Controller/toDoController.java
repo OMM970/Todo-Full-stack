@@ -1,0 +1,45 @@
+package com.example.todolistapk.Controller;
+
+import com.example.todolistapk.Dto.todoReqdto;
+import com.example.todolistapk.Dto.todoResdto;
+import com.example.todolistapk.Serviceimpl.Service;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("api/v1/todos")
+@RequiredArgsConstructor
+public class toDoController {
+    private final Service service;
+
+
+
+    @GetMapping
+    public ResponseEntity<List<todoResdto>> getAllTodos() {
+        return ResponseEntity.ok(service.getallTodo());
+    }
+
+
+    @PostMapping()
+    public ResponseEntity<todoResdto> addTodo(@RequestBody todoReqdto todoReqdto) {
+        return ResponseEntity.status(201)
+                .body(service.addtask(todoReqdto));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<todoResdto>> findTodo() {
+        return ResponseEntity.ok(service.getallTodo());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTodo(@PathVariable long id) {
+        return ResponseEntity.ok(service.deleteTodoname(id));
+    }
+
+
+
+
+}
