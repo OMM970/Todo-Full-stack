@@ -40,6 +40,12 @@ public class toDoController {
     }
 
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<todoResdto> updateTodo(@PathVariable long id, @RequestBody todoReqdto todoReqdto) {
+        return ResponseEntity.ok().body(service.updateTodo(todoReqdto,id));
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.example.todolistapk.Dto;
 
+import com.example.todolistapk.Enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class todoResdto {
-    Long id;
-    String Taskname;
-    String Taskdescription;
+   private Long id;
+   private String Taskname;
+   private String Taskdescription;
+   private TaskStatus status;
 }

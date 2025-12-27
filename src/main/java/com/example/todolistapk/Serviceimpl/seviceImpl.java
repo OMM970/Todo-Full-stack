@@ -3,6 +3,7 @@ package com.example.todolistapk.Serviceimpl;
 import com.example.todolistapk.Dto.todoReqdto;
 import com.example.todolistapk.Dto.todoResdto;
 import com.example.todolistapk.Entity.todoEntity;
+import com.example.todolistapk.Enums.TaskStatus;
 import com.example.todolistapk.Repository.TodoRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class seviceImpl implements Service {
     private final TodoRepo  todoRepo;
+    private final TaskStatus status;
 
 
     @Override
@@ -21,6 +23,7 @@ public class seviceImpl implements Service {
         todoEntity todoEntity = new todoEntity();
         todoEntity.setTaskname(todoReqdto.getTaskname());
         todoEntity.setTaskdescription(todoReqdto.getTaskdescription());
+        todoEntity.setStatus(TaskStatus.TODO);
         todoEntity saved = todoRepo.save(todoEntity);
         return mapToDto(saved);
     }
@@ -31,6 +34,7 @@ public class seviceImpl implements Service {
         todoResdto.setId(todoEntity.getId());
         todoResdto.setTaskname(todoEntity.getTaskname());
         todoResdto.setTaskdescription(todoEntity.getTaskdescription());
+        todoResdto.setStatus(todoEntity.getStatus());
         return todoResdto;
     }
 
@@ -65,4 +69,19 @@ public class seviceImpl implements Service {
         return "Task removed successfully";
 
     }
+
+    @Override
+    @Transactional
+    public todoResdto updateTodo(todoReqdto todoReqdto, Long todoId) {
+        todoEntity todoEntity = todoRepo.findById(todoId)
+                .orElseThrow(() -> new RuntimeException("Task not Available"));
+        todoEntity.setTaskname(todoReqdto.getTaskname());
+        todoEntity.setTaskdescription(todoReqdto.getTaskdescription());
+      if(todoReqdto.getStatus() !=null) {
+          todoEntity.setStatus(todoReqdto.getStatus());
+      }
+      return mapToDto(todoEntity);
+    }
+
+
 }

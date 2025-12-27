@@ -18,4 +18,6 @@ public interface Service {
     todoResdto gettodoByname(String taskname);
 
     String deleteTodoname(long todoId);
+
+    todoResdto updateTodo(todoReqdto todoReqdto, Long todoId);
 }
