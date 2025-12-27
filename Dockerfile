@@ -4,11 +4,13 @@ WORKDIR /app
 
 COPY . .
 
-# 🔑 FIX: give execute permission to mvnw
+# Fix permission for Maven wrapper
 RUN chmod +x mvnw
 
+# Build the Spring Boot jar
 RUN ./mvnw clean package -DskipTests
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/*.jar"]
+# Run the EXACT jar name
+CMD ["java", "-jar", "target/TodoListApk-0.0.1-SNAPSHOT.jar"]
