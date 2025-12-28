@@ -1,13 +1,7 @@
 spring:
-  application:
-    name: TodoListApk
-
   datasource:
     url: ${DATABASE_URL}
 
   jpa:
     hibernate:
       ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
