@@ -1,13 +1,6 @@
 spring:
   application:
     name: TodoListApk
-  datasource:
-    url: jdbc:postgresql://localhost:5432/todo_db
-    username: postgres
-    password: root
-  jpa:
-    hibernate:
-      ddl-auto: update
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  profiles:
+    default: local
