@@ -3,6 +3,7 @@ package com.example.todolistapk.Serviceimpl;
 import com.example.todolistapk.Dto.todoReqdto;
 import com.example.todolistapk.Dto.todoResdto;
 import com.example.todolistapk.Entity.todoEntity;
+import com.example.todolistapk.Enums.TaskStatus;
 
 import java.util.List;
 
@@ -18,4 +19,8 @@ public interface Service {
     todoResdto gettodoByname(String taskname);
 
     String deleteTodoname(long todoId);
+
+    todoResdto updateTodo(todoReqdto todoReqdto, Long todoId);
+
+    todoResdto updateTodoStatus(Long todoId, TaskStatus status);
 }

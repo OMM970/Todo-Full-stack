@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Todo App</title>
-
-    <!-- Link external CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,16 +11,15 @@
     <h2>Todo List</h2>
 
     <input type="text" id="todoInput" placeholder="Enter task">
-
     <input type="text" id="todoDesc" placeholder="Enter description">
 
 
-    <button onclick="addTodo()">Add</button>
+    <button id="addBtn" onclick="saveTodo()">Add</button>
+    <button id="cancelBtn" onclick="cancelUpdate()" style="display:none;">Cancel</button>
 
     <ul id="todoList"></ul>
 </div>
 
-<!-- JS will come next -->
 <script src="script.js"></script>
 
 </body>

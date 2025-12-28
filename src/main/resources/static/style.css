@@ -118,3 +118,19 @@ button:hover {
 #todoList li button:hover {
     background-color: #b02a37;
 }
+
+/* Status dropdown */
+.status-dropdown {
+    margin-top: 6px;
+    padding: 5px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    outline: none;
+    background-color: #ffffff;
+    cursor: pointer;
+}
+
+.status-dropdown:focus {
+    border-color: #007bff;
+}
