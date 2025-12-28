@@ -33,6 +33,13 @@ function loadTodos() {
                     <div class="todo-left">
                         <span class="todo-title">${todo.Taskname}</span>
                         <span class="todo-desc">${todo.Taskdescription}</span>
+                      
+                        <select class="status-dropdown"
+                                onchange="updateStatus(${todo.id}, this.value)">
+                            <option value="TODO" ${todo.status === "TODO" ? "selected" : ""}>TODO</option>
+                            <option value="HALFWAY" ${todo.status === "HALFWAY" ? "selected" : ""}>HALFWAY</option>
+                            <option value="COMPLETED" ${todo.status === "COMPLETED" ? "selected" : ""}>COMPLETED</option>
+                        </select>
                     </div>
                     <div class="todo-actions">
                         <button onclick="editTodo(${todo.id}, '${todo.Taskname}', '${todo.Taskdescription}')">✏️</button>
@@ -170,3 +177,55 @@ function resetForm() {
     document.getElementById("addBtn").innerText = "Add";
     document.getElementById("cancelBtn").style.display = "none";
 }
+// =======================
+// UPDATE STAUS
+// =======================
+function updateStatus(todoId, status) {
+    fetch(`${API_URL}/update/status/${todoId}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(status) // MUST be string only
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to update status");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Status updated:", data);
+        })
+        .catch(error => {
+            console.error("Error updating status:", error);
+            alert("Status update failed");
+        });
+}
+function toggleMenu(btn) {
+    const menu = btn.nextElementSibling;
+    document.querySelectorAll(".status-menu").forEach(m => {
+        if (m !== menu) m.style.display = "none";
+    });
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
+
+function changeStatus(todoId, status, el) {
+    updateStatus(todoId, status);
+
+    const card = el.closest(".todo-right");
+    const chip = card.querySelector(".status-chip");
+
+    chip.className = `status-chip ${status.toLowerCase()}`;
+    chip.innerText = formatStatus(status);
+
+    card.querySelector(".status-menu").style.display = "none";
+}
+
+function formatStatus(status) {
+    if (status === "TODO") return "⏳ To Do";
+    if (status === "HALFWAY") return "🔄 In Progress";
+    if (status === "COMPLETED") return "✅ Completed";
+    return status;
+}
+

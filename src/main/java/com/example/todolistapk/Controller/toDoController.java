@@ -2,6 +2,7 @@ package com.example.todolistapk.Controller;
 
 import com.example.todolistapk.Dto.todoReqdto;
 import com.example.todolistapk.Dto.todoResdto;
+import com.example.todolistapk.Enums.TaskStatus;
 import com.example.todolistapk.Serviceimpl.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,7 @@ public class toDoController {
 
 
 
-    @GetMapping
+    @GetMapping()
     public ResponseEntity<List<todoResdto>> getAllTodos() {
         return ResponseEntity.ok(service.getallTodo());
     }
@@ -43,6 +44,12 @@ public class toDoController {
     @PutMapping("/update/{id}")
     public ResponseEntity<todoResdto> updateTodo(@PathVariable long id, @RequestBody todoReqdto todoReqdto) {
         return ResponseEntity.ok().body(service.updateTodo(todoReqdto,id));
+    }
+
+    @PutMapping("/update/status/{id}")
+    public ResponseEntity<todoResdto> updateTodoStatus(@PathVariable long id, @RequestBody TaskStatus status) {
+        return ResponseEntity.ok().body(service.updateTodoStatus(id,status));
+
     }
 
 

@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class seviceImpl implements Service {
     private final TodoRepo  todoRepo;
-    private final TaskStatus status;
 
 
     @Override
@@ -81,6 +80,14 @@ public class seviceImpl implements Service {
           todoEntity.setStatus(todoReqdto.getStatus());
       }
       return mapToDto(todoEntity);
+    }
+
+    @Override
+    public todoResdto updateTodoStatus(Long todoId, TaskStatus status) {
+        todoEntity todoEntity=todoRepo.findById(todoId)
+                .orElseThrow(() -> new RuntimeException("Task not Available"));
+        todoEntity.setStatus(status);
+        return mapToDto(todoEntity);
     }
 
 
