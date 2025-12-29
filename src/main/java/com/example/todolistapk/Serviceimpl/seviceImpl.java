@@ -87,7 +87,8 @@ public class seviceImpl implements Service {
         todoEntity todoEntity=todoRepo.findById(todoId)
                 .orElseThrow(() -> new RuntimeException("Task not Available"));
         todoEntity.setStatus(status);
-        return mapToDto(todoEntity);
+        todoEntity saved = todoRepo.save(todoEntity);
+        return mapToDto(saved);
     }
 
 

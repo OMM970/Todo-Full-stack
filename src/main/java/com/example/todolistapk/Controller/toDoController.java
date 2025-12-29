@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/todos")
@@ -47,10 +48,14 @@ public class toDoController {
     }
 
     @PutMapping("/update/status/{id}")
-    public ResponseEntity<todoResdto> updateTodoStatus(@PathVariable long id, @RequestBody TaskStatus status) {
-        return ResponseEntity.ok().body(service.updateTodoStatus(id,status));
-
+    public ResponseEntity<todoResdto> updateTodoStatus(
+            @PathVariable long id,
+            @RequestBody Map<String, TaskStatus> body
+    ) {
+        TaskStatus status = body.get("status");
+        return ResponseEntity.ok(service.updateTodoStatus(id, status));
     }
+
 
 
 

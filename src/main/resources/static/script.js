@@ -1,28 +1,29 @@
 const API_URL = "/api/v1/todos";
 
-// holds id of todo being edited
 let editingTodoId = null;
 
-// Load todos when page loads
+const todoInput = document.getElementById("todoInput");
+const todoDesc = document.getElementById("todoDesc");
+const addBtn = document.getElementById("addBtn");
+const cancelBtn = document.getElementById("cancelBtn");
+const todoList = document.getElementById("todoList");
+
 document.addEventListener("DOMContentLoaded", loadTodos);
 
-// =======================
-// GET ALL TODOS
-// =======================
+document.addEventListener("click", () => {
+    document.querySelectorAll(".status-menu").forEach(menu => {
+        menu.style.display = "none";
+    });
+});
+
 function loadTodos() {
     fetch(API_URL)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to fetch todos");
-            }
-            return response.json();
-        })
+        .then(res => res.json())
         .then(todos => {
-            const list = document.getElementById("todoList");
-            list.innerHTML = "";
+            todoList.innerHTML = "";
 
-            if (todos.length === 0) {
-                list.innerHTML = "<li>No tasks available</li>";
+            if (!todos || todos.length === 0) {
+                todoList.innerHTML = "<li>No tasks available</li>";
                 return;
             }
 
@@ -32,194 +33,111 @@ function loadTodos() {
                 li.innerHTML = `
                     <div class="todo-left">
                         <span class="todo-title">${todo.Taskname}</span>
-                        <span class="todo-desc">${todo.Taskdescription}</span>
-                      
-                        <select class="status-dropdown"
-                                onchange="updateStatus(${todo.id}, this.value)">
-                            <option value="TODO" ${todo.status === "TODO" ? "selected" : ""}>TODO</option>
-                            <option value="HALFWAY" ${todo.status === "HALFWAY" ? "selected" : ""}>HALFWAY</option>
-                            <option value="COMPLETED" ${todo.status === "COMPLETED" ? "selected" : ""}>COMPLETED</option>
-                        </select>
+                        <span class="todo-desc">${todo.Taskdescription || ""}</span>
                     </div>
-                    <div class="todo-actions">
-                        <button onclick="editTodo(${todo.id}, '${todo.Taskname}', '${todo.Taskdescription}')">✏️</button>
-                        <button onclick="deleteTodo(${todo.id})">❌</button>
+
+                    <div class="todo-right">
+                        <span class="status-chip ${todo.status.toLowerCase()}"
+                              onclick="toggleMenu(this, event)">
+                            ${formatStatus(todo.status)}
+                        </span>
+
+                        <div class="status-menu">
+                            <div onclick="changeStatus(${todo.id}, 'TODO', event)">⏳ To Do</div>
+                            <div onclick="changeStatus(${todo.id}, 'HALFWAY', event)">🔄 In Progress</div>
+                            <div onclick="changeStatus(${todo.id}, 'COMPLETED', event)">✅ Completed</div>
+                        </div>
+
+                        <div class="todo-actions">
+                            <button onclick="editTodo(${todo.id}, '${todo.Taskname}', '${todo.Taskdescription || ""}')">✏️</button>
+                            <button onclick="deleteTodo(${todo.id})">❌</button>
+                        </div>
                     </div>
                 `;
 
-                list.appendChild(li);
+                todoList.appendChild(li);
             });
-        })
-        .catch(error => {
-            console.error("Error loading todos:", error);
         });
 }
 
-// =======================
-// ADD OR UPDATE SWITCH
-// =======================
 function saveTodo() {
-    if (editingTodoId) {
-        updateTodo();
-    } else {
-        addTodo();
-    }
+    editingTodoId ? updateTodo() : addTodo();
 }
 
-// =======================
-// ADD TODO
-// =======================
 function addTodo() {
-    const input = document.getElementById("todoInput");
-    const desc = document.getElementById("todoDesc");
+    const task = todoInput.value.trim();
+    const description = todoDesc.value.trim();
 
-    const task = input.value.trim();
-    const description = desc.value.trim();
-
-    if (task === "") {
-        alert("Please enter a task");
-        return;
-    }
+    if (!task) return alert("Enter task");
 
     fetch(API_URL, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             Taskname: task,
             Taskdescription: description
         })
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to add todo");
-            }
-            resetForm();
-            loadTodos();
-        })
-        .catch(error => {
-            console.error("Error adding todo:", error);
-        });
+    }).then(() => {
+        resetForm();
+        loadTodos();
+    });
 }
 
-// =======================
-// EDIT TODO (FILL FORM)
-// =======================
 function editTodo(id, task, description) {
     editingTodoId = id;
-
-    document.getElementById("todoInput").value = task;
-    document.getElementById("todoDesc").value = description;
-
-    document.getElementById("addBtn").innerText = "Update";
-    document.getElementById("cancelBtn").style.display = "inline-block";
+    todoInput.value = task;
+    todoDesc.value = description;
+    addBtn.innerText = "Update";
+    cancelBtn.style.display = "inline-block";
 }
 
-// =======================
-// UPDATE TODO
-// =======================
 function updateTodo() {
-    const task = document.getElementById("todoInput").value.trim();
-    const description = document.getElementById("todoDesc").value.trim();
-
     fetch(`${API_URL}/update/${editingTodoId}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            Taskname: task,
-            Taskdescription: description
+            Taskname: todoInput.value.trim(),
+            Taskdescription: todoDesc.value.trim()
         })
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update todo");
-            }
-            resetForm();
-            loadTodos();
-        })
-        .catch(error => {
-            console.error("Error updating todo:", error);
-        });
+    }).then(() => {
+        resetForm();
+        loadTodos();
+    });
 }
 
-// =======================
-// DELETE TODO
-// =======================
 function deleteTodo(id) {
-    fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to delete todo");
-            }
-            loadTodos();
-        })
-        .catch(error => {
-            console.error("Error deleting todo:", error);
-        });
+    fetch(`${API_URL}/${id}`, { method: "DELETE" })
+        .then(() => loadTodos());
 }
 
-function cancelUpdate() {
-    resetForm();
-}
+function changeStatus(todoId, status, event) {
+    event.stopPropagation();
 
-// =======================
-// RESET FORM
-// =======================
-function resetForm() {
-    editingTodoId = null;
-    document.getElementById("todoInput").value = "";
-    document.getElementById("todoDesc").value = "";
-    document.getElementById("addBtn").innerText = "Add";
-    document.getElementById("cancelBtn").style.display = "none";
-}
-// =======================
-// UPDATE STAUS
-// =======================
-function updateStatus(todoId, status) {
     fetch(`${API_URL}/update/status/${todoId}`, {
         method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(status) // MUST be string only
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Failed to update status");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Status updated:", data);
-        })
-        .catch(error => {
-            console.error("Error updating status:", error);
-            alert("Status update failed");
-        });
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+    }).then(() => loadTodos());
 }
-function toggleMenu(btn) {
-    const menu = btn.nextElementSibling;
+
+function toggleMenu(el, event) {
+    event.stopPropagation();
+
+    const menu = el.closest(".todo-right").querySelector(".status-menu");
+
     document.querySelectorAll(".status-menu").forEach(m => {
         if (m !== menu) m.style.display = "none";
     });
+
     menu.style.display = menu.style.display === "block" ? "none" : "block";
 }
 
-function changeStatus(todoId, status, el) {
-    updateStatus(todoId, status);
-
-    const card = el.closest(".todo-right");
-    const chip = card.querySelector(".status-chip");
-
-    chip.className = `status-chip ${status.toLowerCase()}`;
-    chip.innerText = formatStatus(status);
-
-    card.querySelector(".status-menu").style.display = "none";
+function resetForm() {
+    editingTodoId = null;
+    todoInput.value = "";
+    todoDesc.value = "";
+    addBtn.innerText = "Add task";
+    cancelBtn.style.display = "none";
 }
 
 function formatStatus(status) {
@@ -228,4 +146,3 @@ function formatStatus(status) {
     if (status === "COMPLETED") return "✅ Completed";
     return status;
 }
-

@@ -10,17 +10,53 @@
 <div class="container">
     <h2>Todo List</h2>
 
-    <input type="text" id="todoInput" placeholder="Enter task">
-    <input type="text" id="todoDesc" placeholder="Enter description">
+    <!-- Task Composer -->
+    <div class="task-composer">
+        <input
+                type="text"
+                id="todoInput"
+                class="task-title-input"
+                placeholder="Task name"
+        >
 
+        <input
+                type="text"
+                id="todoDesc"
+                class="task-desc-input"
+                placeholder="Description"
+        >
 
-    <button id="addBtn" onclick="saveTodo()">Add</button>
-    <button id="cancelBtn" onclick="cancelUpdate()" style="display:none;">Cancel</button>
+        <div class="composer-actions">
+            <div class="left-actions">
+                <button class="chip-btn" disabled>📅 Date</button>
+                <button class="chip-btn" disabled>⚑ Priority</button>
+            </div>
 
+            <div class="right-actions">
+                <button
+                        id="cancelBtn"
+                        class="cancel-btn"
+                        onclick="resetForm()"
+                        style="display:none;"
+                >
+                    Cancel
+                </button>
+
+                <button
+                        id="addBtn"
+                        class="add-btn"
+                        onclick="saveTodo()"
+                >
+                    Add task
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Todo List -->
     <ul id="todoList"></ul>
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>
