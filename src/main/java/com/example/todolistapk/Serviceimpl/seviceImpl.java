@@ -3,6 +3,7 @@ package com.example.todolistapk.Serviceimpl;
 import com.example.todolistapk.Dto.todoReqdto;
 import com.example.todolistapk.Dto.todoResdto;
 import com.example.todolistapk.Entity.todoEntity;
+import com.example.todolistapk.Enums.TaskPriority;
 import com.example.todolistapk.Enums.TaskStatus;
 import com.example.todolistapk.Repository.TodoRepo;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,7 @@ public class seviceImpl implements Service {
         todoEntity.setTaskname(todoReqdto.getTaskname());
         todoEntity.setTaskdescription(todoReqdto.getTaskdescription());
         todoEntity.setStatus(TaskStatus.TODO);
+        todoEntity.setPriority(todoReqdto.getPriority());
         todoEntity saved = todoRepo.save(todoEntity);
         return mapToDto(saved);
     }
@@ -34,6 +36,7 @@ public class seviceImpl implements Service {
         todoResdto.setTaskname(todoEntity.getTaskname());
         todoResdto.setTaskdescription(todoEntity.getTaskdescription());
         todoResdto.setStatus(todoEntity.getStatus());
+        todoResdto.setPriority(todoEntity.getPriority());
         return todoResdto;
     }
 
@@ -60,7 +63,7 @@ public class seviceImpl implements Service {
 
     @Override
     @Transactional
-    public String deleteTodoname(long todoId) {
+    public String deleteTodoname(Long todoId) {
         if(!todoRepo.findById(todoId).isPresent()) {
             throw new RuntimeException("Task not Avialable");
         }
@@ -89,6 +92,15 @@ public class seviceImpl implements Service {
         todoEntity.setStatus(status);
         todoEntity saved = todoRepo.save(todoEntity);
         return mapToDto(saved);
+    }
+
+    @Override
+    @Transactional
+    public todoResdto updateTodoPriority(Long todoId, TaskPriority priority) {
+        todoEntity entity =todoRepo.findById(todoId)
+                .orElseThrow(() -> new RuntimeException("Task not Available"));
+        entity.setPriority(priority);
+        return mapToDto(entity);
     }
 
 

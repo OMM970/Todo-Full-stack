@@ -1,5 +1,6 @@
 package com.example.todolistapk.Dto;
 
+import com.example.todolistapk.Enums.TaskPriority;
 import com.example.todolistapk.Enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,4 +14,5 @@ public class todoResdto {
    private String Taskname;
    private String Taskdescription;
    private TaskStatus status;
+   private TaskPriority priority;
 }

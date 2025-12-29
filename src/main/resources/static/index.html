@@ -10,17 +10,16 @@
 <div class="container">
     <h2>Todo List</h2>
 
-    <!-- Task Composer -->
+    <!-- TASK COMPOSER -->
     <div class="task-composer">
+
         <input
-                type="text"
                 id="todoInput"
                 class="task-title-input"
                 placeholder="Task name"
         >
 
         <input
-                type="text"
                 id="todoDesc"
                 class="task-desc-input"
                 placeholder="Description"
@@ -28,8 +27,34 @@
 
         <div class="composer-actions">
             <div class="left-actions">
-                <button class="chip-btn" disabled>📅 Date</button>
-                <button class="chip-btn" disabled>⚑ Priority</button>
+
+                <!-- DATE (NOT IMPLEMENTED YET) -->
+                <button class="chip-btn" disabled>
+                    📅 Date
+                </button>
+
+                <!-- PRIORITY (FULLY IMPLEMENTED) -->
+                <div class="composer-priority">
+                    <button class="chip-btn" onclick="toggleComposerPriority(event)">
+                        <span id="composerPriorityLabel">⚑ Priority</span>
+                    </button>
+
+                    <div id="composerPriorityMenu" class="priority-menu">
+                        <div onclick="setComposerPriority('HIGH')">
+                            <span class="flag high">⚑</span> High
+                        </div>
+                        <div onclick="setComposerPriority('MEDIUM')">
+                            <span class="flag medium">⚑</span> Medium
+                        </div>
+                        <div onclick="setComposerPriority('LOW')">
+                            <span class="flag low">⚑</span> Low
+                        </div>
+                        <div onclick="setComposerPriority(null)">
+                            ✖ Clear
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
             <div class="right-actions">
@@ -53,8 +78,9 @@
         </div>
     </div>
 
-    <!-- Todo List -->
+    <!-- TODO LIST -->
     <ul id="todoList"></ul>
+
 </div>
 
 <script src="script.js"></script>

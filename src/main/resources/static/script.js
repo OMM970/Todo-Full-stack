@@ -1,6 +1,7 @@
 const API_URL = "/api/v1/todos";
 
 let editingTodoId = null;
+let composerPriority = null; // ✅ priority during creation
 
 const todoInput = document.getElementById("todoInput");
 const todoDesc = document.getElementById("todoDesc");
@@ -9,13 +10,11 @@ const cancelBtn = document.getElementById("cancelBtn");
 const todoList = document.getElementById("todoList");
 
 document.addEventListener("DOMContentLoaded", loadTodos);
+document.addEventListener("click", closeAllMenus);
 
-document.addEventListener("click", () => {
-    document.querySelectorAll(".status-menu").forEach(menu => {
-        menu.style.display = "none";
-    });
-});
-
+/* =======================
+   LOAD TODOS
+======================= */
 function loadTodos() {
     fetch(API_URL)
         .then(res => res.json())
@@ -37,6 +36,8 @@ function loadTodos() {
                     </div>
 
                     <div class="todo-right">
+
+                        <!-- STATUS -->
                         <span class="status-chip ${todo.status.toLowerCase()}"
                               onclick="toggleMenu(this, event)">
                             ${formatStatus(todo.status)}
@@ -48,6 +49,30 @@ function loadTodos() {
                             <div onclick="changeStatus(${todo.id}, 'COMPLETED', event)">✅ Completed</div>
                         </div>
 
+                        <!-- PRIORITY CHIP -->
+                        <span class="priority-chip ${todo.priority ? '' : 'none'}"
+                              onclick="toggleMenu(this, event)">
+                            <span class="flag ${todo.priority?.toLowerCase() || ''}">⚑</span>
+                            ${todo.priority || 'Priority'}
+                        </span>
+
+                        <!-- PRIORITY MENU -->
+                        <div class="priority-menu">
+                            <div onclick="changePriority(${todo.id}, 'HIGH', event)">
+                                <span class="flag high">⚑</span> High
+                            </div>
+                            <div onclick="changePriority(${todo.id}, 'MEDIUM', event)">
+                                <span class="flag medium">⚑</span> Medium
+                            </div>
+                            <div onclick="changePriority(${todo.id}, 'LOW', event)">
+                                <span class="flag low">⚑</span> Low
+                            </div>
+                            <div onclick="changePriority(${todo.id}, null, event)">
+                                ✖ Clear
+                            </div>
+                        </div>
+
+                        <!-- ACTIONS -->
                         <div class="todo-actions">
                             <button onclick="editTodo(${todo.id}, '${todo.Taskname}', '${todo.Taskdescription || ""}')">✏️</button>
                             <button onclick="deleteTodo(${todo.id})">❌</button>
@@ -60,10 +85,16 @@ function loadTodos() {
         });
 }
 
+/* =======================
+   SAVE SWITCH
+======================= */
 function saveTodo() {
     editingTodoId ? updateTodo() : addTodo();
 }
 
+/* =======================
+   ADD TODO
+======================= */
 function addTodo() {
     const task = todoInput.value.trim();
     const description = todoDesc.value.trim();
@@ -75,7 +106,8 @@ function addTodo() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             Taskname: task,
-            Taskdescription: description
+            Taskdescription: description,
+            priority: composerPriority // ✅ send priority
         })
     }).then(() => {
         resetForm();
@@ -83,6 +115,9 @@ function addTodo() {
     });
 }
 
+/* =======================
+   EDIT TODO
+======================= */
 function editTodo(id, task, description) {
     editingTodoId = id;
     todoInput.value = task;
@@ -91,6 +126,9 @@ function editTodo(id, task, description) {
     cancelBtn.style.display = "inline-block";
 }
 
+/* =======================
+   UPDATE TODO
+======================= */
 function updateTodo() {
     fetch(`${API_URL}/update/${editingTodoId}`, {
         method: "PUT",
@@ -105,11 +143,17 @@ function updateTodo() {
     });
 }
 
+/* =======================
+   DELETE TODO
+======================= */
 function deleteTodo(id) {
     fetch(`${API_URL}/${id}`, { method: "DELETE" })
         .then(() => loadTodos());
 }
 
+/* =======================
+   STATUS UPDATE
+======================= */
 function changeStatus(todoId, status, event) {
     event.stopPropagation();
 
@@ -120,26 +164,80 @@ function changeStatus(todoId, status, event) {
     }).then(() => loadTodos());
 }
 
-function toggleMenu(el, event) {
+/* =======================
+   PRIORITY UPDATE
+======================= */
+function changePriority(todoId, priority, event) {
     event.stopPropagation();
 
-    const menu = el.closest(".todo-right").querySelector(".status-menu");
-
-    document.querySelectorAll(".status-menu").forEach(m => {
-        if (m !== menu) m.style.display = "none";
-    });
-
-    menu.style.display = menu.style.display === "block" ? "none" : "block";
+    fetch(`${API_URL}/update/priority/${todoId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ priority })
+    }).then(() => loadTodos());
 }
 
+/* =======================
+   MENU TOGGLE
+======================= */
+function toggleMenu(el, event) {
+    event.stopPropagation();
+    closeAllMenus();
+    el.nextElementSibling.style.display = "block";
+}
+
+function closeAllMenus() {
+    document.querySelectorAll(".status-menu, .priority-menu")
+        .forEach(m => m.style.display = "none");
+
+    const composerMenu = document.getElementById("composerPriorityMenu");
+    if (composerMenu) composerMenu.style.display = "none";
+}
+
+/* =======================
+   COMPOSER PRIORITY
+======================= */
+function toggleComposerPriority(event) {
+    event.stopPropagation();
+    closeAllMenus();
+    document.getElementById("composerPriorityMenu").style.display = "block";
+}
+
+function setComposerPriority(priority) {
+    composerPriority = priority;
+
+    const label = document.getElementById("composerPriorityLabel");
+
+    if (!priority) {
+        label.innerHTML = "⚑ Priority";
+    } else if (priority === "HIGH") {
+        label.innerHTML = '<span class="flag high">⚑</span> High';
+    } else if (priority === "MEDIUM") {
+        label.innerHTML = '<span class="flag medium">⚑</span> Medium';
+    } else if (priority === "LOW") {
+        label.innerHTML = '<span class="flag low">⚑</span> Low';
+    }
+
+    closeAllMenus();
+}
+
+/* =======================
+   RESET FORM
+======================= */
 function resetForm() {
     editingTodoId = null;
     todoInput.value = "";
     todoDesc.value = "";
+    composerPriority = null;
+    const label = document.getElementById("composerPriorityLabel");
+    if (label) label.innerHTML = "⚑ Priority";
     addBtn.innerText = "Add task";
     cancelBtn.style.display = "none";
 }
 
+/* =======================
+   STATUS LABEL
+======================= */
 function formatStatus(status) {
     if (status === "TODO") return "⏳ To Do";
     if (status === "HALFWAY") return "🔄 In Progress";
