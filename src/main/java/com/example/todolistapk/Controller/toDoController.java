@@ -2,6 +2,7 @@ package com.example.todolistapk.Controller;
 
 import com.example.todolistapk.Dto.todoReqdto;
 import com.example.todolistapk.Dto.todoResdto;
+import com.example.todolistapk.Enums.TaskPriority;
 import com.example.todolistapk.Enums.TaskStatus;
 import com.example.todolistapk.Serviceimpl.Service;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +55,12 @@ public class toDoController {
     ) {
         TaskStatus status = body.get("status");
         return ResponseEntity.ok(service.updateTodoStatus(id, status));
+    }
+
+    @PutMapping("/update/priority/{id}")
+    public ResponseEntity<todoResdto> updateTodoPriority(@PathVariable long id, @RequestBody Map<String, TaskPriority> body) {
+        TaskPriority priority = body.get("priority");
+        return ResponseEntity.ok(service.updateTodoPriority(id, priority));
     }
 
 

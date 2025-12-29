@@ -1,5 +1,6 @@
 package com.example.todolistapk.Entity;
 
+import com.example.todolistapk.Enums.TaskPriority;
 import com.example.todolistapk.Enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,11 +19,17 @@ public class todoEntity {
 
     @Column(name = "todo_title")
     private String Taskname;
+
     @Column(name = "todo_description")
    private String Taskdescription;
+
     @Column(name = "todo_status")
     @Enumerated(EnumType.STRING)
     private TaskStatus status;
+
+    @Column(name="todo_priority")
+    @Enumerated(EnumType.STRING)
+    private TaskPriority priority;
 
 
 }
