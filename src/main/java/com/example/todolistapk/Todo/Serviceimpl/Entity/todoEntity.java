@@ -1,7 +1,7 @@
-package com.example.todolistapk.Entity;
+package com.example.todolistapk.Todo.Serviceimpl.Entity;
 
-import com.example.todolistapk.Enums.TaskPriority;
-import com.example.todolistapk.Enums.TaskStatus;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

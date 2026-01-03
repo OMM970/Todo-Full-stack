@@ -1,6 +1,6 @@
-package com.example.todolistapk.Repository;
+package com.example.todolistapk.Todo.Serviceimpl.Repository;
 
-import com.example.todolistapk.Entity.todoEntity;
+import com.example.todolistapk.Todo.Serviceimpl.Entity.todoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

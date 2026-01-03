@@ -1,10 +1,10 @@
-package com.example.todolistapk.Controller;
+package com.example.todolistapk.Todo.Serviceimpl.Controller;
 
-import com.example.todolistapk.Dto.todoReqdto;
-import com.example.todolistapk.Dto.todoResdto;
-import com.example.todolistapk.Enums.TaskPriority;
-import com.example.todolistapk.Enums.TaskStatus;
-import com.example.todolistapk.Serviceimpl.Service;
+import com.example.todolistapk.Todo.Serviceimpl.Dto.todoReqdto;
+import com.example.todolistapk.Todo.Serviceimpl.Dto.todoResdto;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
+import com.example.todolistapk.Todo.Serviceimpl.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
