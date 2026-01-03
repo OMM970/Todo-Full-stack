@@ -1,7 +1,7 @@
 const API_URL = "/api/v1/todos";
 
 let editingTodoId = null;
-let composerPriority = null; // ✅ priority during creation
+let composerPriority = null; // priority during creation
 
 const todoInput = document.getElementById("todoInput");
 const todoDesc = document.getElementById("todoDesc");
@@ -9,14 +9,27 @@ const addBtn = document.getElementById("addBtn");
 const cancelBtn = document.getElementById("cancelBtn");
 const todoList = document.getElementById("todoList");
 
-document.addEventListener("DOMContentLoaded", loadTodos);
+/* =======================
+   PAGE LOAD (AUTH FIRST)
+======================= */
+document.addEventListener("DOMContentLoaded", () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+        redirectToLogin();
+        return;
+    }
+
+    loadTodos();
+});
+
 document.addEventListener("click", closeAllMenus);
 
 /* =======================
    LOAD TODOS
 ======================= */
 function loadTodos() {
-    fetch(API_URL)
+    authFetch(API_URL)
         .then(res => res.json())
         .then(todos => {
             todoList.innerHTML = "";
@@ -37,7 +50,6 @@ function loadTodos() {
 
                     <div class="todo-right">
 
-                        <!-- STATUS -->
                         <span class="status-chip ${todo.status.toLowerCase()}"
                               onclick="toggleMenu(this, event)">
                             ${formatStatus(todo.status)}
@@ -49,14 +61,12 @@ function loadTodos() {
                             <div onclick="changeStatus(${todo.id}, 'COMPLETED', event)">✅ Completed</div>
                         </div>
 
-                        <!-- PRIORITY CHIP -->
                         <span class="priority-chip ${todo.priority ? '' : 'none'}"
                               onclick="toggleMenu(this, event)">
                             <span class="flag ${todo.priority?.toLowerCase() || ''}">⚑</span>
                             ${todo.priority || 'Priority'}
                         </span>
 
-                        <!-- PRIORITY MENU -->
                         <div class="priority-menu">
                             <div onclick="changePriority(${todo.id}, 'HIGH', event)">
                                 <span class="flag high">⚑</span> High
@@ -72,7 +82,6 @@ function loadTodos() {
                             </div>
                         </div>
 
-                        <!-- ACTIONS -->
                         <div class="todo-actions">
                             <button onclick="editTodo(${todo.id}, '${todo.Taskname}', '${todo.Taskdescription || ""}')">✏️</button>
                             <button onclick="deleteTodo(${todo.id})">❌</button>
@@ -86,13 +95,6 @@ function loadTodos() {
 }
 
 /* =======================
-   SAVE SWITCH
-======================= */
-function saveTodo() {
-    editingTodoId ? updateTodo() : addTodo();
-}
-
-/* =======================
    ADD TODO
 ======================= */
 function addTodo() {
@@ -101,13 +103,12 @@ function addTodo() {
 
     if (!task) return alert("Enter task");
 
-    fetch(API_URL, {
+    authFetch(API_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             Taskname: task,
             Taskdescription: description,
-            priority: composerPriority // ✅ send priority
+            priority: composerPriority
         })
     }).then(() => {
         resetForm();
@@ -130,9 +131,8 @@ function editTodo(id, task, description) {
    UPDATE TODO
 ======================= */
 function updateTodo() {
-    fetch(`${API_URL}/update/${editingTodoId}`, {
+    authFetch(`${API_URL}/update/${editingTodoId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
             Taskname: todoInput.value.trim(),
             Taskdescription: todoDesc.value.trim()
@@ -147,7 +147,7 @@ function updateTodo() {
    DELETE TODO
 ======================= */
 function deleteTodo(id) {
-    fetch(`${API_URL}/${id}`, { method: "DELETE" })
+    authFetch(`${API_URL}/${id}`, { method: "DELETE" })
         .then(() => loadTodos());
 }
 
@@ -157,9 +157,8 @@ function deleteTodo(id) {
 function changeStatus(todoId, status, event) {
     event.stopPropagation();
 
-    fetch(`${API_URL}/update/status/${todoId}`, {
+    authFetch(`${API_URL}/update/status/${todoId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status })
     }).then(() => loadTodos());
 }
@@ -170,9 +169,8 @@ function changeStatus(todoId, status, event) {
 function changePriority(todoId, priority, event) {
     event.stopPropagation();
 
-    fetch(`${API_URL}/update/priority/${todoId}`, {
+    authFetch(`${API_URL}/update/priority/${todoId}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ priority })
     }).then(() => loadTodos());
 }
@@ -208,15 +206,10 @@ function setComposerPriority(priority) {
 
     const label = document.getElementById("composerPriorityLabel");
 
-    if (!priority) {
-        label.innerHTML = "⚑ Priority";
-    } else if (priority === "HIGH") {
-        label.innerHTML = '<span class="flag high">⚑</span> High';
-    } else if (priority === "MEDIUM") {
-        label.innerHTML = '<span class="flag medium">⚑</span> Medium';
-    } else if (priority === "LOW") {
-        label.innerHTML = '<span class="flag low">⚑</span> Low';
-    }
+    if (!priority) label.innerHTML = "⚑ Priority";
+    else if (priority === "HIGH") label.innerHTML = '<span class="flag high">⚑</span> High';
+    else if (priority === "MEDIUM") label.innerHTML = '<span class="flag medium">⚑</span> Medium';
+    else if (priority === "LOW") label.innerHTML = '<span class="flag low">⚑</span> Low';
 
     closeAllMenus();
 }
@@ -243,4 +236,12 @@ function formatStatus(status) {
     if (status === "HALFWAY") return "🔄 In Progress";
     if (status === "COMPLETED") return "✅ Completed";
     return status;
+}
+
+function saveTodo() {
+    if (editingTodoId === null) {
+        addTodo();
+    } else {
+        updateTodo();
+    }
 }

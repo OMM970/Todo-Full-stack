@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Todo App</title>
-    <link rel="stylesheet" href="style.css">
+
+    <!-- IMPORTANT: absolute path for Spring Boot -->
+    <link rel="stylesheet" href="/dashboard.css">
 </head>
 <body>
 
@@ -33,9 +35,13 @@
                     📅 Date
                 </button>
 
-                <!-- PRIORITY (FULLY IMPLEMENTED) -->
+                <!-- PRIORITY -->
                 <div class="composer-priority">
-                    <button class="chip-btn" onclick="toggleComposerPriority(event)">
+                    <button
+                            class="chip-btn"
+                            onclick="toggleComposerPriority(event)"
+                            type="button"
+                    >
                         <span id="composerPriorityLabel">⚑ Priority</span>
                     </button>
 
@@ -63,6 +69,7 @@
                         class="cancel-btn"
                         onclick="resetForm()"
                         style="display:none;"
+                        type="button"
                 >
                     Cancel
                 </button>
@@ -71,6 +78,7 @@
                         id="addBtn"
                         class="add-btn"
                         onclick="saveTodo()"
+                        type="button"
                 >
                     Add task
                 </button>
@@ -83,6 +91,10 @@
 
 </div>
 
-<script src="script.js"></script>
+
+<script src="/auth.js"></script>
+<script src="/dashboard.js"></script>
+
+
 </body>
 </html>

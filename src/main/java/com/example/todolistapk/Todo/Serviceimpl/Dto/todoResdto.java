@@ -1,7 +1,7 @@
-package com.example.todolistapk.Dto;
+package com.example.todolistapk.Todo.Serviceimpl.Dto;
 
-import com.example.todolistapk.Enums.TaskPriority;
-import com.example.todolistapk.Enums.TaskStatus;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

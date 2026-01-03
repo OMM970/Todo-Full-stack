@@ -1,10 +1,10 @@
-package com.example.todolistapk.Serviceimpl;
+package com.example.todolistapk.Todo.Serviceimpl;
 
-import com.example.todolistapk.Dto.todoReqdto;
-import com.example.todolistapk.Dto.todoResdto;
-import com.example.todolistapk.Entity.todoEntity;
-import com.example.todolistapk.Enums.TaskPriority;
-import com.example.todolistapk.Enums.TaskStatus;
+import com.example.todolistapk.Todo.Serviceimpl.Dto.todoReqdto;
+import com.example.todolistapk.Todo.Serviceimpl.Dto.todoResdto;
+import com.example.todolistapk.Todo.Serviceimpl.Entity.todoEntity;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 
 import java.util.List;
 
