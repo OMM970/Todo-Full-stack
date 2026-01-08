@@ -24,6 +24,7 @@ public class UserServiceimpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     public static final String EMAIL="^[a-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+    public static final String PASSWORD="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$\n";
 
     @Override
     public userResDto registerUser(userReqDto userReqDto) {
@@ -32,9 +33,10 @@ public class UserServiceimpl implements UserService {
             throw new RuntimeException("Invalid email address");
         }
         userEntitiy.setEmail(userReqDto.getEmail());
-        if(userReqDto.getPassword().equals(userReqDto.getConfirmPassword())){
+        if(!userReqDto.getPassword().equals(userReqDto.getConfirmPassword())){
             throw new IllegalArgumentException("Passwords do not match");
         }
+
         userEntitiy.setPassword(passwordEncoder.encode(userReqDto.getPassword()));
         userEntitiy.setUsername(userReqDto.getUsername());
         UserEntitiy saved =userRepo.save(userEntitiy);
@@ -59,7 +61,7 @@ public class UserServiceimpl implements UserService {
        if(!passwordEncoder.matches(loginReqDto.getPassword(),user.getPassword())){
            throw new UsernameNotFoundException("Wrong password");
        }
-       String token = jwtUtil.generateToken(user.getEmail());
+       String token = jwtUtil.generateToken(user.getEmail(), user.getId());
        return new loginResDto(token);
     }
 

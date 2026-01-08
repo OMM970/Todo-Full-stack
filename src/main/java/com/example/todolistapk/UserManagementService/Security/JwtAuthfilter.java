@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -20,24 +21,30 @@ import java.util.List;
 public class JwtAuthfilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final USerRepo userRepo;
-    @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader("Authorization");
-        if (header == null || !header.startsWith("Bearer ")) {
+        @Override
+        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+            String header = request.getHeader("Authorization");
+            if (header == null || !header.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+            String token = header.substring(7);
+            String email=jwtUtil.getUsername(token);
+            Long userID=jwtUtil.getUserID(token);
+            UserEntitiy newentity = userRepo.findById(userID).orElseThrow(()->new UsernameNotFoundException("User not found"));
+            if(newentity!=null){
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userID,null,List.of());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+
+            UserEntitiy entitiy = userRepo.findByEmail(email).orElse(null);
+            if(entitiy!=null){
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,null, List.of());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            }
             filterChain.doFilter(request, response);
-            return;
         }
-        String token = header.substring(7);
-        String email=jwtUtil.getUsername(token);
-
-        UserEntitiy entitiy = userRepo.findByEmail(email).orElse(null);
-        if(entitiy!=null){
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(email,null, List.of());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-        }
-        filterChain.doFilter(request, response);
-    }
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
@@ -45,13 +52,9 @@ public class JwtAuthfilter extends OncePerRequestFilter {
         return
 
                 path.startsWith("/api/v1/auth/")
-
-
                         || path.equals("/")
                         || path.equals("/login.html")
                         || path.equals("/register.html")
-
-
                         || path.endsWith(".js")
                         || path.endsWith(".css")
                         || path.endsWith(".png")

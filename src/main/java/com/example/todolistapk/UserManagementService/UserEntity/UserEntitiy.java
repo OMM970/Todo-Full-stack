@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name = "UserDb")
+@Table(name = "UserDb",uniqueConstraints = {
+        @UniqueConstraint(columnNames = "user_email")
+})
 public class UserEntitiy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
