@@ -25,7 +25,7 @@ async function register(event) {
         const response = await fetch(REGISTER_URL, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, email, password })
+            body: JSON.stringify({ username, email, password,confirmPassword })
         });
 
         if (!response.ok) {
