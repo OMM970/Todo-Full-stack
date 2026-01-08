@@ -21,20 +21,20 @@ public class toDoController {
 
 
     @GetMapping()
-    public ResponseEntity<List<todoResdto>> getAllTodos() {
-        return ResponseEntity.ok(service.getallTodo());
+    public ResponseEntity<List<todoResdto>> getAllTodos(@RequestHeader("Authorization") String authHeader ) {
+        return ResponseEntity.ok(service.getallTodo( authHeader));
     }
 
 
     @PostMapping()
-    public ResponseEntity<todoResdto> addTodo(@RequestBody todoReqdto todoReqdto) {
+    public ResponseEntity<todoResdto> addTodo(@RequestBody todoReqdto todoReqdto ,@RequestHeader("Authorization") String authHeader ) {
         return ResponseEntity.status(201)
-                .body(service.addtask(todoReqdto));
+                .body(service.addtask(todoReqdto,authHeader));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<todoResdto>> findTodo() {
-        return ResponseEntity.ok(service.getallTodo());
+    public ResponseEntity<List<todoResdto>> findTodo(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(service.getallTodo(authHeader));
     }
 
     @DeleteMapping("/{id}")

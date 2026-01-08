@@ -2,6 +2,7 @@ package com.example.todolistapk.Todo.Serviceimpl.Entity;
 
 import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
 import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
+import com.example.todolistapk.UserManagementService.UserEntity.UserEntitiy;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +32,8 @@ public class todoEntity {
     @Enumerated(EnumType.STRING)
     private TaskPriority priority;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntitiy userEntitiy;
 
 }

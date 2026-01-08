@@ -1,14 +1,20 @@
 package com.example.todolistapk.Todo.Serviceimpl;
 
+import com.example.todolistapk.GlobalException.NoTodoException;
 import com.example.todolistapk.Todo.Serviceimpl.Dto.todoReqdto;
 import com.example.todolistapk.Todo.Serviceimpl.Dto.todoResdto;
 import com.example.todolistapk.Todo.Serviceimpl.Entity.todoEntity;
 import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskPriority;
 import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 import com.example.todolistapk.Todo.Serviceimpl.Repository.TodoRepo;
+import com.example.todolistapk.UserManagementService.Security.JwtAuthfilter;
+import com.example.todolistapk.UserManagementService.Security.JwtUtil;
+import com.example.todolistapk.UserManagementService.UserEntity.UserEntitiy;
+import com.example.todolistapk.UserManagementService.UserRepo.USerRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,14 +23,26 @@ import java.util.stream.Collectors;
 public class seviceImpl implements Service {
     private final TodoRepo  todoRepo;
 
+    private final JwtUtil jwtUtil;
+    private final USerRepo userRepo;
+
 
     @Override
-    public todoResdto addtask(todoReqdto todoReqdto) {
+    public todoResdto addtask(todoReqdto todoReqdto,String authHeader) {
+        String token= authHeader.substring("Bearer ".length());
+
+        Long userID= jwtUtil.getUserID(token);
+
+        UserEntitiy userEntitiy= userRepo.findById(userID)
+                .orElseThrow(()->new NoTodoException("User not found"));
+        
         todoEntity todoEntity = new todoEntity();
         todoEntity.setTaskname(todoReqdto.getTaskname());
         todoEntity.setTaskdescription(todoReqdto.getTaskdescription());
         todoEntity.setStatus(TaskStatus.TODO);
         todoEntity.setPriority(todoReqdto.getPriority());
+        todoEntity.setUserEntitiy(userEntitiy);
+
         todoEntity saved = todoRepo.save(todoEntity);
         return mapToDto(saved);
     }
@@ -41,23 +59,29 @@ public class seviceImpl implements Service {
     }
 
     @Override
-    public List<todoResdto> getallTodo() {
-        return todoRepo.findAll()
-                .stream()
+    public List<todoResdto> getallTodo(String authHeader) {
+        String token = authHeader.substring("Bearer ".length());
+        Long userID= jwtUtil.getUserID(token);
+        UserEntitiy user= userRepo.findById(userID)
+                .orElseThrow(()->new NoTodoException("User not found"));
+        List<todoEntity> todoEntities= todoRepo.findByUserEntitiy(user);
+
+        return todoEntities.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+
 
     }
 
     @Override
     public todoResdto getTodoById(Long todoId) {
-        todoEntity todoEntity = todoRepo.findById(todoId).orElseThrow(()->new RuntimeException("Task not Found"));
+        todoEntity todoEntity = todoRepo.findById(todoId).orElseThrow(()->new NoTodoException("Task not Avialable") );
         return mapToDto(todoEntity);
     }
 
     @Override
     public todoResdto gettodoByname(String taskname) {
-        todoEntity todoEntity = todoRepo.findByTaskname(taskname).orElseThrow(()->new RuntimeException("Task not Avialable"));
+        todoEntity todoEntity = new todoEntity();
         return mapToDto(todoEntity);
     }
 
@@ -65,7 +89,7 @@ public class seviceImpl implements Service {
     @Transactional
     public String deleteTodoname(Long todoId) {
         if(!todoRepo.findById(todoId).isPresent()) {
-            throw new RuntimeException("Task not Avialable");
+            throw new NoTodoException("Task not Avialable");
         }
         todoRepo.deleteById(todoId);
         return "Task removed successfully";
@@ -76,7 +100,7 @@ public class seviceImpl implements Service {
     @Transactional
     public todoResdto updateTodo(todoReqdto todoReqdto, Long todoId) {
         todoEntity todoEntity = todoRepo.findById(todoId)
-                .orElseThrow(() -> new RuntimeException("Task not Available"));
+                .orElseThrow(() -> new NoTodoException("No Todo Found"));
         todoEntity.setTaskname(todoReqdto.getTaskname());
         todoEntity.setTaskdescription(todoReqdto.getTaskdescription());
       if(todoReqdto.getStatus() !=null) {
@@ -88,7 +112,7 @@ public class seviceImpl implements Service {
     @Override
     public todoResdto updateTodoStatus(Long todoId, TaskStatus status) {
         todoEntity todoEntity=todoRepo.findById(todoId)
-                .orElseThrow(() -> new RuntimeException("Task not Available"));
+                .orElseThrow(() -> new NoTodoException("Task not Avialable"));
         todoEntity.setStatus(status);
         todoEntity saved = todoRepo.save(todoEntity);
         return mapToDto(saved);
@@ -98,7 +122,7 @@ public class seviceImpl implements Service {
     @Transactional
     public todoResdto updateTodoPriority(Long todoId, TaskPriority priority) {
         todoEntity entity =todoRepo.findById(todoId)
-                .orElseThrow(() -> new RuntimeException("Task not Available"));
+                .orElseThrow(() -> new NoTodoException("Task not Avialable"));
         entity.setPriority(priority);
         return mapToDto(entity);
     }

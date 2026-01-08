@@ -176,12 +176,14 @@ function changePriority(todoId, priority, event) {
 }
 
 /* =======================
-   MENU TOGGLE
+   MENU TOGGLE (SIMPLE POSITIONING)
 ======================= */
 function toggleMenu(el, event) {
     event.stopPropagation();
     closeAllMenus();
-    el.nextElementSibling.style.display = "block";
+
+    const menu = el.nextElementSibling;
+    menu.style.display = "block";
 }
 
 function closeAllMenus() {

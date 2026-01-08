@@ -12,22 +12,71 @@
 ===================== */
 body {
     height: 100vh;
-    background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Animated background circles */
+body::before,
+body::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    animation: float 20s infinite ease-in-out;
+}
+
+body::before {
+    width: 400px;
+    height: 400px;
+    top: -100px;
+    left: -100px;
+    animation-delay: 0s;
+}
+
+body::after {
+    width: 300px;
+    height: 300px;
+    bottom: -80px;
+    right: -80px;
+    animation-delay: 5s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -30px) scale(1.1); }
+    66% { transform: translate(-20px, 20px) scale(0.9); }
 }
 
 /* =====================
    AUTH CONTAINER
 ===================== */
 .auth-box {
-    width: 360px;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    width: 420px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 1;
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* =====================
@@ -35,8 +84,14 @@ body {
 ===================== */
 .auth-box h2 {
     text-align: center;
-    margin-bottom: 20px;
-    color: #333;
+    margin-bottom: 30px;
+    color: #2d3748;
+    font-size: 28px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 /* =====================
@@ -44,16 +99,25 @@ body {
 ===================== */
 .auth-box input {
     width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
+    padding: 14px 16px;
+    margin: 12px 0;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 15px;
+    transition: all 0.3s ease;
+    background: #f7fafc;
 }
 
 .auth-box input:focus {
-    border-color: #007bff;
+    border-color: #667eea;
     outline: none;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-2px);
+}
+
+.auth-box input::placeholder {
+    color: #a0aec0;
 }
 
 /* =====================
@@ -62,39 +126,47 @@ body {
 .password-wrapper {
     position: relative;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .password-wrapper input {
-    padding-right: 42px;
+    padding-right: 48px;
+    margin: 0;
 }
 
 /* Eye toggle button */
 .password-wrapper button {
     position: absolute;
     top: 50%;
-    right: 8px;
+    right: 12px;
     transform: translateY(-50%);
     background: none;
     border: none;
     cursor: pointer;
-    padding: 0;
+    padding: 8px;
     outline: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.password-wrapper button:hover {
+    background: rgba(102, 126, 234, 0.1);
 }
 
 /* Eye icon */
 .password-wrapper i {
-    font-size: 20px;
-    color: #555;
+    font-size: 22px;
+    color: #718096;
+    transition: color 0.3s ease;
 }
 
 .password-wrapper button:hover i {
-    color: #000;
+    color: #667eea;
 }
 
 .password-wrapper button:focus-visible {
-    outline: 2px solid #007bff;
-    border-radius: 4px;
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
 }
 
 /* =====================
@@ -102,45 +174,60 @@ body {
 ===================== */
 .auth-box button[type="submit"] {
     width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: #007bff;
+    padding: 14px;
+    margin-top: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 15px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s ease;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .auth-box button[type="submit"]:hover {
-    background: #0056b3;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.auth-box button[type="submit"]:active {
+    transform: translateY(0);
 }
 
 /* =====================
    ERROR MESSAGE
 ===================== */
 .error {
-    color: red;
-    font-size: 13px;
+    color: #e53e3e;
+    font-size: 14px;
     text-align: center;
-    margin-top: 10px;
+    margin-top: 12px;
+    padding: 8px;
+    border-radius: 8px;
+    background: rgba(229, 62, 62, 0.1);
+    font-weight: 500;
 }
 
 /* =====================
    SWITCH LINK
 ===================== */
 .switch {
-    margin-top: 15px;
+    margin-top: 24px;
     text-align: center;
     font-size: 14px;
+    color: #4a5568;
 }
 
 .switch a {
-    color: #007bff;
+    color: #667eea;
     text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
 .switch a:hover {
+    color: #764ba2;
     text-decoration: underline;
 }

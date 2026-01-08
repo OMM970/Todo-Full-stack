@@ -9,11 +9,11 @@ import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 import java.util.List;
 
 public interface Service {
-    todoResdto addtask(todoReqdto todoReqdto);
+    todoResdto addtask(todoReqdto todoReqdto,String token);
 
     todoResdto mapToDto(todoEntity todoEntity);
 
-    List<todoResdto> getallTodo();
+    List<todoResdto> getallTodo(String authHeader);
 
     todoResdto getTodoById(Long todoId);
 
