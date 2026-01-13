@@ -26,4 +26,6 @@ public interface Service {
     todoResdto updateTodoStatus(Long todoId, TaskStatus status);
 
     todoResdto updateTodoPriority(Long todoId, TaskPriority priority);
+
+    List<todoResdto> getCompletedtodo(String authHeader);
 }

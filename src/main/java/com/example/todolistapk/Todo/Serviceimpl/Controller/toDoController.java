@@ -25,6 +25,11 @@ public class toDoController {
         return ResponseEntity.ok(service.getallTodo( authHeader));
     }
 
+    @GetMapping("/completed")
+    public ResponseEntity<List<todoResdto>> getCompletedTodos(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(service.getCompletedtodo(authHeader));
+    }
+
 
     @PostMapping()
     public ResponseEntity<todoResdto> addTodo(@RequestBody todoReqdto todoReqdto ,@RequestHeader("Authorization") String authHeader ) {

@@ -1,6 +1,7 @@
 package com.example.todolistapk.Todo.Serviceimpl.Repository;
 
 import com.example.todolistapk.Todo.Serviceimpl.Entity.todoEntity;
+import com.example.todolistapk.Todo.Serviceimpl.Enums.TaskStatus;
 import com.example.todolistapk.UserManagementService.UserEntity.UserEntitiy;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -15,4 +16,7 @@ public interface TodoRepo extends JpaRepository<todoEntity,Integer> {
     todoEntity deleteById(long todoId);
 
     List<todoEntity> findByUserEntitiy(UserEntitiy  userEntitiy);
+
+    List<todoEntity> findByUserEntitiyAndStatus(UserEntitiy userEntitiy, TaskStatus status);
+
 }

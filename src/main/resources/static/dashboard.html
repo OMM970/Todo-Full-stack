@@ -3,98 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <title>Todo App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- IMPORTANT: absolute path for Spring Boot -->
+    <!-- Spring Boot absolute path -->
     <link rel="stylesheet" href="/dashboard.css">
 </head>
 <body>
 
-<div class="container">
-    <h2>Todo List</h2>
+<div class="app-layout sidebar-collapsed">
 
-    <!-- TASK COMPOSER -->
-    <div class="task-composer">
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+    <aside class="sidebar">
 
-        <input
-                id="todoInput"
-                class="task-title-input"
-                placeholder="Task name"
-        >
+        <div class="sidebar-header">
+            <div class="avatar">M</div>
+            <span class="username">22beee41</span>
+        </div>
 
-        <input
-                id="todoDesc"
-                class="task-desc-input"
-                placeholder="Description"
-        >
+        <nav class="sidebar-nav">
+            <button id="navInbox" class="nav-item active">📥 Inbox</button>
+            <button class="nav-item">📅 Today</button>
+            <button class="nav-item">⏭ Upcoming</button>
+            <button class="nav-item">🏷 Filters & Labels</button>
+            <button id="navCompleted" class="nav-item">✅ Completed</button>
+        </nav>
 
-        <div class="composer-actions">
-            <div class="left-actions">
 
-                <!-- DATE (NOT IMPLEMENTED YET) -->
-                <button class="chip-btn" disabled>
-                    📅 Date
-                </button>
+        <div class="sidebar-divider"></div>
 
-                <!-- PRIORITY -->
-                <div class="composer-priority">
-                    <button
-                            class="chip-btn"
-                            onclick="toggleComposerPriority(event)"
-                            type="button"
-                    >
-                        <span id="composerPriorityLabel">⚑ Priority</span>
-                    </button>
+        <div class="projects">
+            <h4>My Projects</h4>
+            <button class="nav-item project">
+                # Getting Started <span class="count">11</span>
+            </button>
+        </div>
 
-                    <div id="composerPriorityMenu" class="priority-menu">
-                        <div onclick="setComposerPriority('HIGH')">
-                            <span class="flag high">⚑</span> High
+        <div class="sidebar-footer">
+            ❓ Help & resources
+        </div>
+
+    </aside>
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+    <main class="main-content">
+
+        <!-- SIDEBAR TOGGLE -->
+        <button id="sidebarToggle" class="sidebar-toggle" type="button">
+            ☰
+        </button>
+
+        <div class="container">
+            <h2 id="pageTitle">Todo List</h2>
+
+
+
+            <!-- TASK COMPOSER -->
+            <form class="task-composer" onsubmit="event.preventDefault(); saveTodo();">
+
+                <input id="todoInput"
+                       class="task-title-input"
+                       type="text"
+                       placeholder="Task name">
+
+                <input id="todoDesc"
+                       class="task-desc-input"
+                       type="text"
+                       placeholder="Description">
+
+                <div class="composer-actions">
+                    <div class="left-actions">
+
+                        <button class="chip-btn" disabled>📅 Date</button>
+
+                        <div class="composer-priority">
+                            <button class="chip-btn"
+                                    onclick="toggleComposerPriority(event)"
+                                    type="button">
+                                <span id="composerPriorityLabel">⚑ Priority</span>
+                            </button>
+
+                            <div id="composerPriorityMenu" class="priority-menu">
+                                <div onclick="setComposerPriority('HIGH')"><span class="flag high">⚑</span> High</div>
+                                <div onclick="setComposerPriority('MEDIUM')"><span class="flag medium">⚑</span> Medium</div>
+                                <div onclick="setComposerPriority('LOW')"><span class="flag low">⚑</span> Low</div>
+                                <div onclick="setComposerPriority(null)">✖ Clear</div>
+                            </div>
                         </div>
-                        <div onclick="setComposerPriority('MEDIUM')">
-                            <span class="flag medium">⚑</span> Medium
-                        </div>
-                        <div onclick="setComposerPriority('LOW')">
-                            <span class="flag low">⚑</span> Low
-                        </div>
-                        <div onclick="setComposerPriority(null)">
-                            ✖ Clear
-                        </div>
+
+                    </div>
+
+                    <div class="right-actions">
+                        <button id="cancelBtn"
+                                class="cancel-btn"
+                                onclick="resetForm()"
+                                style="display:none;"
+                                type="button">
+                            Cancel
+                        </button>
+
+                        <button id="addBtn"
+                                class="add-btn"
+                                type="submit">
+                            Add task
+                        </button>
                     </div>
                 </div>
+            </form>
 
-            </div>
+            <!-- TODO LIST -->
+            <ul id="todoList"></ul>
 
-            <div class="right-actions">
-                <button
-                        id="cancelBtn"
-                        class="cancel-btn"
-                        onclick="resetForm()"
-                        style="display:none;"
-                        type="button"
-                >
-                    Cancel
-                </button>
-
-                <button
-                        id="addBtn"
-                        class="add-btn"
-                        onclick="saveTodo()"
-                        type="button"
-                >
-                    Add task
-                </button>
-            </div>
         </div>
-    </div>
-
-    <!-- TODO LIST -->
-    <ul id="todoList"></ul>
+    </main>
 
 </div>
 
-
+<!-- =========================
+     SCRIPTS
+========================== -->
 <script src="/auth.js"></script>
 <script src="/dashboard.js"></script>
 
+<script>
+    const layout = document.querySelector(".app-layout");
+    document.getElementById("sidebarToggle")
+        .addEventListener("click", () => {
+            layout.classList.toggle("sidebar-collapsed");
+        });
+
+    document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => {
+            document.querySelectorAll(".nav-item")
+                .forEach(i => i.classList.remove("active"));
+            item.classList.add("active");
+        });
+    });
+</script>
 
 </body>
 </html>

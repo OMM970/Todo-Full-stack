@@ -126,6 +126,17 @@ public class seviceImpl implements Service {
         entity.setPriority(priority);
         return mapToDto(entity);
     }
+    @Override
+    public List<todoResdto> getCompletedtodo(String authHeader) {
+        String token = authHeader.substring("Bearer ".length());
+        Long userID= jwtUtil.getUserID(token);
+        UserEntitiy user= userRepo.findById(userID)
+                .orElseThrow(()->new NoTodoException("User not found"));
+
+        List<todoEntity> todoEntities = todoRepo.findByUserEntitiyAndStatus(user, TaskStatus.COMPLETED);
+        return todoEntities.stream().map(this::mapToDto).collect(Collectors.toList());
+
+    }
 
 
 }
