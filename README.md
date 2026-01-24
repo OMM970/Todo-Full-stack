@@ -86,7 +86,7 @@ This structure ensures clean separation of concerns and maintainability.
 - PostgreSQL  
 - Maven  
 
-### Steps
+### Steps..
 
 ```bash
 git clone https://github.com/OMM970/Todo-Full-stack.git
